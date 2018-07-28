@@ -1250,7 +1250,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
 		{
 			std::packaged_task<void()> t([&pool, ptx, hash, coins_to_uncache, hashCacheEntry, vChecks]() {
 				const int64_t &time = GetTimeMicros();
-				LogPrint("thread", "Entering thread for signature checks for hash %s\n", hash.ToString());
+				LogPrint("thread", "THREADPOOL::Entering thread for signature checks for hash %s\n", hash.ToString());
 				CValidationState vstate;
 				CCoinsViewCache vView(pcoinsTip);
 				const CTransaction& txIn = *ptx;
@@ -1284,7 +1284,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
 					nLastMultithreadMempoolFailure = GetTime();
 				}
 				scriptExecutionCache.insert(hashCacheEntry);
-				LogPrint("thread", "Finished thread for signature checks for hash %s, elapsed %lld microseconds\n", hash.ToString(), GetTimeMicros() - time);
+				LogPrint("thread", "THREADPOOL::Finished thread for signature checks for hash %s, elapsed %lld microseconds\n", hash.ToString(), GetTimeMicros() - time);
 			});
 			int numTries = 100;
 			while (!threadpool.tryPost(t)) {
@@ -1297,6 +1297,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
 				}
 				MilliSleep(1);
 			}
+			LogPrint("thread", "THREADPOOL::Added worker for signature checks for hash %s, elapsed %lld microseconds\n", hash.ToString(), GetTimeMicros() - time);
 
 		}
 	}
