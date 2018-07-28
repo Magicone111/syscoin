@@ -1251,7 +1251,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
 			static int totalExecutions = 0;
 			static int concurrentExecutions = 0;
 			static int64_t totalExecution = 0;
-			static int64_t minExecution = 0;
+			static int64_t minExecution = 1000000000;
 			static int64_t maxExecution = 0;
 			static int concurrentCount = 0;
 			concurrentExecutions += concurrentCount;
