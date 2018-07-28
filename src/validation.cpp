@@ -1297,7 +1297,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
 				}
 				MilliSleep(1);
 			}
-			LogPrint("thread", "THREADPOOL::Added worker for signature checks for hash %s, elapsed %lld microseconds\n", hash.ToString(), GetTimeMicros() - time);
+			LogPrint("thread", "THREADPOOL::Added worker for signature checks for hash %s\n", hash.ToString());
 
 		}
 	}
