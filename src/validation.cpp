@@ -1301,7 +1301,8 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
 				totalExecution += thisExecution;
 				concurrentCount--;
 			});
-			LogPrint("threadpool", "THREADPOOL::Added worker for signature checks for hash %s, size: %d, idlesize: %d, total executions: %d, concurrent executions: %d, average execution time: %lld microseconds, min execution time: %lld microseconds, max execution time: %lld microseconds\n", hash.ToString(), tp->size(), tp->idlesize(), totalExecutions, concurrentExecutions, totalExecution/totalExecutions, minExecution, maxExecution);
+			if(!fDebug || (fDebug && (totalExecutions % 100) == 0))
+				LogPrint("threadpool", "THREADPOOL::Added worker for signature checks for hash %s, size: %d, idlesize: %d, total executions: %d, concurrent executions: %d, average execution time: %lld microseconds, min execution time: %lld microseconds, max execution time: %lld microseconds\n", hash.ToString(), tp->size(), tp->idlesize(), totalExecutions, concurrentExecutions, totalExecution/totalExecutions, minExecution, maxExecution);
 
 		}
 	}
