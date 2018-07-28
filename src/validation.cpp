@@ -1248,9 +1248,18 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
 		}
 		if (bMultiThreaded && tp != NULL)
 		{
+			static int totalExecutions = 0;
+			static int concurrentExecutions = 0;
+			static int64_t totalExecution = 0;
+			static int64_t minExecution = 0;
+			static int64_t maxExecution = 0;
+			static int concurrentCount = 0;
+			concurrentExecutions += concurrentCount;
+			concurrentCount++;
+			totalExecutions++;
+			
 			tp->post([&pool, ptx, hash, coins_to_uncache, hashCacheEntry, vChecks]() {
 				const int64_t &time = GetTimeMicros();
-				LogPrint("threadpool", "THREADPOOL::Entering thread for signature checks for hash %s, size: %d, idlesize: %d\n", hash.ToString(), tp->size(), tp->idlesize());
 				CValidationState vstate;
 				CCoinsViewCache vView(pcoinsTip);
 				const CTransaction& txIn = *ptx;
@@ -1284,9 +1293,15 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
 					nLastMultithreadMempoolFailure = GetTime();
 				}
 				scriptExecutionCache.insert(hashCacheEntry);
-				LogPrint("threadpool", "THREADPOOL::Finished thread for signature checks for hash %s, elapsed %lld microseconds, size: %d, idlesize: %d\n", hash.ToString(), GetTimeMicros() - time, tp->size(), tp->idlesize());
+				const int64_t &thisExecution = GetTimeMicros() - time;
+				if (thisExecution < minExecution)
+					minExecution = thisExecution;
+				if (thisExecution > maxExecution)
+					maxExecution = thisExecution;
+				totalExecution += thisExecution;
+				concurrentCount--;
 			});
-			LogPrint("threadpool", "THREADPOOL::Added worker for signature checks for hash %s, size: %d, idlesize: %d\n", hash.ToString(), tp->size(), tp->idlesize());
+			LogPrint("threadpool", "THREADPOOL::Added worker for signature checks for hash %s, size: %d, idlesize: %d, total executions: %d, concurrent executions: %d, average execution time: %lld microseconds, min execution time: %lld microseconds, max execution time: %lld microseconds\n", hash.ToString(), tp->size(), tp->idlesize(), totalExecutions, concurrentExecutions, totalExecution/totalExecutions, minExecution, maxExecution);
 
 		}
 	}
