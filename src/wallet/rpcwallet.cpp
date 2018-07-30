@@ -1,6 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2017 The Dash Core developers
+// Copyright (c) 2009-2015 The Syscoin Core developers
 // Copyright (c) 2014-2017 The Syscoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -1489,7 +1488,7 @@ void ListTransactions(const CWalletTx& wtx, const std::string& strAccount, int n
 						if (!assetallocation.listSendingAllocationAmounts.empty()) {
 							for (auto& amountTuple : assetallocation.listSendingAllocationAmounts) {
 								UniValue oAssetAllocationReceiversObj(UniValue::VOBJ);
-								oAssetAllocationReceiversObj.push_back(Pair("address", EncodeBase58(amountTuple.first)));
+								oAssetAllocationReceiversObj.push_back(Pair("aliasto", stringFromVch(amountTuple.first)));
 								oAssetAllocationReceiversObj.push_back(Pair("amount", ValueFromAmount(amountTuple.second)));
 								oAssetAllocationReceiversArray.push_back(oAssetAllocationReceiversObj);
 							}
@@ -1498,7 +1497,7 @@ void ListTransactions(const CWalletTx& wtx, const std::string& strAccount, int n
 						else if (!assetallocation.listSendingAllocationInputs.empty()) {
 							for (auto& inputTuple : assetallocation.listSendingAllocationInputs) {
 								UniValue oAssetAllocationReceiversObj(UniValue::VOBJ);
-								oAssetAllocationReceiversObj.push_back(Pair("address", EncodeBase58(inputTuple.first)));
+								oAssetAllocationReceiversObj.push_back(Pair("aliasto", stringFromVch(inputTuple.first)));
 								for (auto& inputRange : inputTuple.second) {
 									oAssetAllocationReceiversObj.push_back(Pair("start", (int)inputRange.start));
 									oAssetAllocationReceiversObj.push_back(Pair("end", (int)inputRange.end));
@@ -1582,7 +1581,7 @@ void ListTransactions(const CWalletTx& wtx, const std::string& strAccount, int n
 							if (!assetallocation.listSendingAllocationAmounts.empty()) {
 								for (auto& amountTuple : assetallocation.listSendingAllocationAmounts) {
 									UniValue oAssetAllocationReceiversObj(UniValue::VOBJ);
-									oAssetAllocationReceiversObj.push_back(Pair("address", EncodeBase58(amountTuple.first)));
+									oAssetAllocationReceiversObj.push_back(Pair("aliasto", stringFromVch(amountTuple.first)));
 									oAssetAllocationReceiversObj.push_back(Pair("amount", ValueFromAmount(amountTuple.second)));
 									oAssetAllocationReceiversArray.push_back(oAssetAllocationReceiversObj);
 								}
@@ -1591,7 +1590,7 @@ void ListTransactions(const CWalletTx& wtx, const std::string& strAccount, int n
 							else if (!assetallocation.listSendingAllocationInputs.empty()) {
 								for (auto& inputTuple : assetallocation.listSendingAllocationInputs) {
 									UniValue oAssetAllocationReceiversObj(UniValue::VOBJ);
-									oAssetAllocationReceiversObj.push_back(Pair("address", EncodeBase58(inputTuple.first)));
+									oAssetAllocationReceiversObj.push_back(Pair("aliasto", stringFromVch(inputTuple.first)));
 									for (auto& inputRange : inputTuple.second) {
 										oAssetAllocationReceiversObj.push_back(Pair("start", (int)inputRange.start));
 										oAssetAllocationReceiversObj.push_back(Pair("end", (int)inputRange.end));

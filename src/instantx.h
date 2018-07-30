@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The Syscoin Core developers
+// Copyright (c) 2014-2017 The Syscoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef INSTANTX_H
@@ -47,8 +46,6 @@ extern int nCompleteTXLocks;
 class CInstantSend
 {
 private:
-    static const std::string SERIALIZATION_VERSION_STRING;
-
     // Keep track of current block height
     int nCachedBlockHeight;
 
@@ -87,37 +84,7 @@ private:
     bool IsInstantSendReadyToLock(const uint256 &txHash);
 
 public:
-    mutable CCriticalSection cs_instantsend;
-
-    ADD_SERIALIZE_METHODS;
-
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        std::string strVersion;
-        if(ser_action.ForRead()) {
-            READWRITE(strVersion);
-        }
-        else {
-            strVersion = SERIALIZATION_VERSION_STRING;
-            READWRITE(strVersion);
-        }
-
-        READWRITE(mapLockRequestAccepted);
-        READWRITE(mapLockRequestRejected);
-        READWRITE(mapTxLockVotes);
-        READWRITE(mapTxLockVotesOrphan);
-        READWRITE(mapTxLockCandidates);
-        READWRITE(mapVotedOutpoints);
-        READWRITE(mapLockedOutpoints);
-        READWRITE(mapMasternodeOrphanVotes);
-        READWRITE(nCachedBlockHeight);
-
-        if(ser_action.ForRead() && (strVersion != SERIALIZATION_VERSION_STRING)) {
-            Clear();
-        }
-    }
-
-    void Clear();
+    CCriticalSection cs_instantsend;
 
     void ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStream& vRecv, CConnman& connman);
 
@@ -152,7 +119,7 @@ public:
     void UpdatedBlockTip(const CBlockIndex *pindex);
     void SyncTransaction(const CTransaction& tx, const CBlockIndex *pindex, int posInBlock);
 
-    std::string ToString() const;
+    std::string ToString();
 };
 
 class CTxLockRequest
@@ -274,23 +241,12 @@ public:
     static const int SIGNATURES_REQUIRED        = 6;
     static const int SIGNATURES_TOTAL           = 10;
 
-    COutPointLock() {}
-
     COutPointLock(const COutPoint& outpointIn) :
         outpoint(outpointIn),
         mapMasternodeVotes()
         {}
 
     COutPoint GetOutpoint() const { return outpoint; }
-
-    ADD_SERIALIZE_METHODS;
-
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        READWRITE(outpoint);
-        READWRITE(mapMasternodeVotes);
-        READWRITE(fAttacked);
-    }
 
     bool AddVote(const CTxLockVote& vote);
     std::vector<CTxLockVote> GetVotes() const;
@@ -309,11 +265,6 @@ private:
     int64_t nTimeCreated;
 
 public:
-    CTxLockCandidate() :
-        nConfirmedHeight(-1),
-        nTimeCreated(GetTime())
-    {}
-
     CTxLockCandidate(const CTxLockRequest& txLockRequestIn) :
         nConfirmedHeight(-1),
         nTimeCreated(GetTime()),
@@ -323,16 +274,6 @@ public:
 
     CTxLockRequest txLockRequest;
     std::map<COutPoint, COutPointLock> mapOutPointLocks;
-
-    ADD_SERIALIZE_METHODS;
-
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        READWRITE(txLockRequest);
-        READWRITE(mapOutPointLocks);
-        READWRITE(nTimeCreated);
-        READWRITE(nConfirmedHeight);
-    }
 
     uint256 GetHash() const { return txLockRequest.GetHash(); }
 

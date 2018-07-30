@@ -1,5 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
-// Copyright (c) 2014-2018 The Syscoin Core developers
+// Copyright (c) 2012-2017 The Syscoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -440,3 +439,4 @@ BOOST_AUTO_TEST_CASE(test_CheckQueueControl_Locks)
     }
 }
 BOOST_AUTO_TEST_SUITE_END()
+

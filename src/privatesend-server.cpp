@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The Syscoin Core developers
+// Copyright (c) 2014-2017 The Syscoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "privatesend-server.h"
@@ -434,15 +433,7 @@ void CPrivateSendServer::ChargeFees(CConnman& connman)
         LogPrintf("CPrivateSendServer::ChargeFees -- found uncooperative node (didn't %s transaction), charging fees: %s\n",
                 (nState == POOL_STATE_SIGNING) ? "sign" : "send", vecOffendersCollaterals[0]->ToString());
 
-        LOCK(cs_main);
-
-        CValidationState state;
-        if(!AcceptToMemoryPool(mempool, state, vecOffendersCollaterals[0], false, NULL, NULL, false, maxTxFee)) {
-            // should never really happen
-            LogPrintf("CPrivateSendServer::ChargeFees -- ERROR: AcceptToMemoryPool failed!\n");
-        } else {
-            connman.RelayTransaction(*vecOffendersCollaterals[0]);
-        }
+        connman.RelayTransaction(*vecOffendersCollaterals[0]);
     }
 }
 
@@ -462,19 +453,10 @@ void CPrivateSendServer::ChargeRandomFees(CConnman& connman)
 {
     if(!fMasternodeMode) return;
 
-    LOCK(cs_main);
-
     for (const auto& txCollateral : vecSessionCollaterals) {
         if(GetRandInt(100) > 10) return;
         LogPrintf("CPrivateSendServer::ChargeRandomFees -- charging random fees, txCollateral=%s", txCollateral->ToString());
-
-        CValidationState state;
-        if(!AcceptToMemoryPool(mempool, state, txCollateral, false, NULL, NULL, false, maxTxFee)) {
-            // should never really happen
-            LogPrintf("CPrivateSendServer::ChargeRandomFees -- ERROR: AcceptToMemoryPool failed!\n");
-        } else {
-            connman.RelayTransaction(*txCollateral);
-        }
+        connman.RelayTransaction(*txCollateral);
     }
 }
 

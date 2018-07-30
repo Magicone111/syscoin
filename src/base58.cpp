@@ -1,5 +1,4 @@
 // Copyright (c) 2014-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2017 The Dash Core developers
 // Copyright (c) 2014-2017 The Syscoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -21,8 +20,6 @@ static const char* pszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnop
 
 bool DecodeBase58(const char* psz, std::vector<unsigned char>& vch)
 {
-	// SYSCOIN
-	vch.clear();
     // Skip leading spaces.
     while (*psz && isspace(*psz))
         psz++;

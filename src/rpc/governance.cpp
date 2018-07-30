@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The Syscoin Core developers
+// Copyright (c) 2014-2017 The Syscoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -427,6 +426,9 @@ UniValue gobject(const JSONRPCRequest& request)
         int nSuccessful = 0;
         int nFailed = 0;
 
+        std::vector<CMasternodeConfig::CMasternodeEntry> mnEntries;
+        mnEntries = masternodeConfig.getEntries();
+
         UniValue resultsObj(UniValue::VOBJ);
 
         for (const auto& mne : masternodeConfig.getEntries()) {
@@ -535,6 +537,9 @@ UniValue gobject(const JSONRPCRequest& request)
 
         int nSuccessful = 0;
         int nFailed = 0;
+
+        std::vector<CMasternodeConfig::CMasternodeEntry> mnEntries;
+        mnEntries = masternodeConfig.getEntries();
 
         UniValue resultsObj(UniValue::VOBJ);
 

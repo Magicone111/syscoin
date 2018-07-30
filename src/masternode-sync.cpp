@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The Syscoin Core developers
+// Copyright (c) 2014-2017 The Syscoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -258,12 +257,6 @@ void CMasternodeSync::ProcessTick(CConnman& connman)
                     return;
                 }
 
-	            // request from three peers max
-				if (nRequestedMasternodeAttempt > 2) {
-					connman.ReleaseNodeVector(vNodesCopy);
-					return;
-					
-				}
                 // only request once from each peer
                 if(netfulfilledman.HasFulfilledRequest(pnode->addr, "masternode-list-sync")) continue;
                 netfulfilledman.AddFulfilledRequest(pnode->addr, "masternode-list-sync");
@@ -307,13 +300,6 @@ void CMasternodeSync::ProcessTick(CConnman& connman)
                     connman.ReleaseNodeVector(vNodesCopy);
                     return;
                 }
-
-				// request from three peers max
-				if (nRequestedMasternodeAttempt > 2) {
-					connman.ReleaseNodeVector(vNodesCopy);
-					return;
-
-				}
 
                 // only request once from each peer
                 if(netfulfilledman.HasFulfilledRequest(pnode->addr, "masternode-payment-sync")) continue;

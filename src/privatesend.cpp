@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The Syscoin Core developers
+// Copyright (c) 2014-2017 The Syscoin Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "privatesend.h"
@@ -367,8 +366,8 @@ int CPrivateSend::GetDenominationsByAmounts(const std::vector<CAmount>& vecAmoun
     CScript scriptTmp = CScript();
     std::vector<CTxOut> vecTxOut;
 
-    for (auto it = vecAmount.rbegin(); it != vecAmount.rend(); ++it) {
-        CTxOut txout((*it), scriptTmp);
+    BOOST_REVERSE_FOREACH(CAmount nAmount, vecAmount) {
+        CTxOut txout(nAmount, scriptTmp);
         vecTxOut.push_back(txout);
     }
 

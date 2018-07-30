@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 The Syscoin Core developers
+// Copyright (c) 2015-2017 The Syscoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -30,35 +30,34 @@ bool RemoveAssetAllocationScriptPrefix(const CScript& scriptIn, CScript& scriptO
 class CAssetAllocationTuple {
 public:
 	std::vector<unsigned char> vchAsset;
-	std::vector<unsigned char> vchAliasOrAddress;
+	std::vector<unsigned char> vchAlias;
+
 	ADD_SERIALIZE_METHODS;
 
 	template <typename Stream, typename Operation>
 	inline void SerializationOp(Stream& s, Operation ser_action) {
 		READWRITE(vchAsset);
-		READWRITE(vchAliasOrAddress);
+		READWRITE(vchAlias);
 	}
-	CAssetAllocationTuple(const std::vector<unsigned char> &asset, const std::vector<unsigned char> &aliasoraddress) {
+
+	CAssetAllocationTuple(const std::vector<unsigned char> &asset, const std::vector<unsigned char> &alias) {
 		vchAsset = asset;
-		vchAliasOrAddress = aliasoraddress;
+		vchAlias = alias;
 	}
-	CAssetAllocationTuple(const std::vector<unsigned char> &asset) {
-		vchAsset = asset;
-		vchAliasOrAddress.clear();
-	}
+
 	CAssetAllocationTuple() {
 		SetNull();
 	}
 	inline CAssetAllocationTuple operator=(const CAssetAllocationTuple& other) {
 		this->vchAsset = other.vchAsset;
-		this->vchAliasOrAddress = other.vchAliasOrAddress;
+		this->vchAlias = other.vchAlias;
 		return *this;
 	}
 	inline bool operator==(const CAssetAllocationTuple& other) const {
-		return this->vchAsset == other.vchAsset && this->vchAliasOrAddress == other.vchAliasOrAddress;
+		return this->vchAsset == other.vchAsset && this->vchAlias == other.vchAlias;
 	}
 	inline bool operator!=(const CAssetAllocationTuple& other) const {
-		return (this->vchAsset != other.vchAsset || this->vchAliasOrAddress != other.vchAliasOrAddress);
+		return (this->vchAsset != other.vchAsset || this->vchAlias != other.vchAlias);
 	}
 	inline bool operator< (const CAssetAllocationTuple& right) const
 	{
@@ -66,11 +65,11 @@ public:
 	}
 	inline void SetNull() {
 		vchAsset.clear();
-		vchAliasOrAddress.clear();
+		vchAlias.clear();
 	}
 	std::string ToString() const;
 	inline bool IsNull() {
-		return (vchAsset.empty() && vchAliasOrAddress.empty());
+		return (vchAsset.empty() && vchAlias.empty());
 	}
 };
 typedef std::pair<std::vector<unsigned char>, std::vector<CRange> > InputRanges;
@@ -97,7 +96,7 @@ enum {
 class CAssetAllocation {
 public:
 	std::vector<unsigned char> vchAsset;
-	std::vector<unsigned char> vchAliasOrAddress;
+	std::vector<unsigned char> vchAlias;
 	uint256 txHash;
 	unsigned int nHeight;
 	unsigned int nLastInterestClaimHeight;
@@ -117,20 +116,12 @@ public:
 		SetNull();
 		UnserializeFromTx(tx);
 	}
-	inline void ClearAssetAllocation()
-	{
-		vchMemo.clear();
-		listAllocationInputs.clear();
-		listSendingAllocationInputs.clear();
-		listSendingAllocationAmounts.clear();
-		vchAliasOrAddress.clear();
-		vchAsset.clear();
-	}
+
 	ADD_SERIALIZE_METHODS;
 	template <typename Stream, typename Operation>
 	inline void SerializationOp(Stream& s, Operation ser_action) {
 		READWRITE(vchAsset);
-		READWRITE(vchAliasOrAddress);
+		READWRITE(vchAlias);
 		READWRITE(txHash);
 		READWRITE(VARINT(nHeight));
 		READWRITE(VARINT(nLastInterestClaimHeight));
@@ -144,16 +135,16 @@ public:
 		READWRITE(vchMemo);
 	}
 	inline friend bool operator==(const CAssetAllocation &a, const CAssetAllocation &b) {
-		return (a.vchAsset == b.vchAsset && a.vchAliasOrAddress == b.vchAliasOrAddress
+		return (a.vchAsset == b.vchAsset && a.vchAlias == b.vchAlias
 			);
 	}
 
 	inline CAssetAllocation operator=(const CAssetAllocation &b) {
 		vchAsset = b.vchAsset;
-		vchAliasOrAddress = b.vchAliasOrAddress;
 		txHash = b.txHash;
 		nHeight = b.nHeight;
 		nLastInterestClaimHeight = b.nLastInterestClaimHeight;
+		vchAlias = b.vchAlias;
 		listAllocationInputs = b.listAllocationInputs;
 		listSendingAllocationInputs = b.listSendingAllocationInputs;
 		listSendingAllocationAmounts = b.listSendingAllocationAmounts;
@@ -168,7 +159,7 @@ public:
 	inline friend bool operator!=(const CAssetAllocation &a, const CAssetAllocation &b) {
 		return !(a == b);
 	}
-	inline void SetNull() { fInterestRate = 0; fAccumulatedInterestSinceLastInterestClaim = 0; nAccumulatedBalanceSinceLastInterestClaim = 0; vchMemo.clear(); nLastInterestClaimHeight = 0; nBalance = 0; listSendingAllocationAmounts.clear();  listSendingAllocationInputs.clear(); listAllocationInputs.clear(); vchAsset.clear(); vchAliasOrAddress.clear(); nHeight = 0; txHash.SetNull(); }
+	inline void SetNull() { fInterestRate = 0; fAccumulatedInterestSinceLastInterestClaim = 0; nAccumulatedBalanceSinceLastInterestClaim = 0; vchMemo.clear(); nLastInterestClaimHeight = 0; nBalance = 0; listSendingAllocationAmounts.clear();  listSendingAllocationInputs.clear(); listAllocationInputs.clear(); vchAsset.clear(); nHeight = 0; txHash.SetNull(); vchAlias.clear(); }
 	inline bool IsNull() const { return (vchAsset.empty()); }
 	bool UnserializeFromTx(const CTransaction &tx);
 	bool UnserializeFromData(const std::vector<unsigned char> &vchData, const std::vector<unsigned char> &vchHash);
@@ -180,8 +171,8 @@ class CAssetAllocationDB : public CDBWrapper {
 public:
 	CAssetAllocationDB(size_t nCacheSize, bool fMemory, bool fWipe) : CDBWrapper(GetDataDir() / "assetallocations", nCacheSize, fMemory, fWipe, false, true) {}
 
-    bool WriteAssetAllocation(const CAssetAllocation& assetallocation, const CAmount& nSenderBalance, const CAmount& nAmount, const CAsset& asset, const int64_t& arrivalTime, const std::string& strSender, const std::string& strReceiver, const bool& fJustCheck) {
-		const CAssetAllocationTuple allocationTuple(assetallocation.vchAsset, assetallocation.vchAliasOrAddress);
+    bool WriteAssetAllocation(const CAssetAllocation& assetallocation, const CAmount& nSenderBalance, const CAmount& nAmount, const CAsset& asset, const int64_t& arrivalTime, const std::vector<unsigned char>& vchSender, const std::vector<unsigned char>& vchReceiver, const bool& fJustCheck) {
+		const CAssetAllocationTuple allocationTuple(assetallocation.vchAsset, assetallocation.vchAlias);
 		bool writeState = false;
 		{
 			writeState = Write(make_pair(std::string("assetallocationi"), allocationTuple), assetallocation);
@@ -191,13 +182,13 @@ public:
 				if (arrivalTime < INT64_MAX) {
 					ArrivalTimesMap arrivalTimes;
 					ReadISArrivalTimes(allocationTuple, arrivalTimes);
-					arrivalTimes.emplace(assetallocation.txHash, arrivalTime);
+					arrivalTimes[assetallocation.txHash] = arrivalTime;
 					writeState = writeState && Write(make_pair(std::string("assetallocationa"), allocationTuple), arrivalTimes);
 				}
 			}
 		}
-		if(writeState && !strReceiver.empty())
-			WriteAssetAllocationIndex(assetallocation, asset, nSenderBalance, nAmount, strSender, strReceiver);
+		if(writeState && !vchReceiver.empty())
+			WriteAssetAllocationIndex(assetallocation, asset, nSenderBalance, nAmount, vchSender, vchReceiver);
         return writeState;
     }
 	bool EraseAssetAllocation(const CAssetAllocationTuple& assetAllocationTuple, bool cleanup = false) {
@@ -231,7 +222,7 @@ public:
 	bool EraseISArrivalTimes(const CAssetAllocationTuple& assetAllocationTuple) {
 		return Erase(make_pair(std::string("assetallocationa"), assetAllocationTuple));
 	}
-	void WriteAssetAllocationIndex(const CAssetAllocation& assetAllocationTuple, const CAsset& asset, const CAmount& nSenderBalance, const CAmount& nAmount, const std::string& strSender, const std::string& strReceiver);
+	void WriteAssetAllocationIndex(const CAssetAllocation& assetAllocationTuple, const CAsset& asset, const CAmount& nSenderBalance, const CAmount& nAmount, const std::vector<unsigned char>& vchSender, const std::vector<unsigned char>& vchReceiver);
 	bool ScanAssetAllocations(const int count, const int from, const UniValue& oOptions, UniValue& oRes);
 };
 class CAssetAllocationTransactionsDB : public CDBWrapper {
@@ -248,9 +239,9 @@ public:
 	}
 	bool ScanAssetAllocationIndex(const int count, const int from, const UniValue& oOptions, UniValue& oRes);
 };
-bool CheckAssetAllocationInputs(const CTransaction &tx, const CCoinsViewCache &inputs, int op, const std::vector<std::vector<unsigned char> > &vvchArgs, const std::vector<unsigned char> &vchAlias, bool fJustCheck, int nHeight, sorted_vector<CAssetAllocationTuple> &revertedAssetAllocations, std::string &errorMessage, bool bSanityCheck = false);
+bool CheckAssetAllocationInputs(const CTransaction &tx, int op, const std::vector<std::vector<unsigned char> > &vvchArgs, const std::vector<unsigned char> &vvchAlias, bool fJustCheck, int nHeight, sorted_vector<CAssetAllocationTuple> &revertedAssetAllocations, std::string &errorMessage, bool bSanityCheck = false);
 bool GetAssetAllocation(const CAssetAllocationTuple& assetAllocationTuple,CAssetAllocation& txPos);
 bool BuildAssetAllocationJson(CAssetAllocation& assetallocation, const CAsset& asset, const bool bGetInputs, UniValue& oName);
-bool BuildAssetAllocationIndexerJson(const CAssetAllocation& assetallocation, const CAsset& asset, const CAmount& nSenderBalance, const CAmount& nAmount, const std::string& strSender, const std::string& strReceiver, bool &isMine, UniValue& oAssetAllocation);
+bool BuildAssetAllocationIndexerJson(const CAssetAllocation& assetallocation, const CAsset& asset, const CAmount& nSenderBalance, const CAmount& nAmount, const std::vector<unsigned char>& strSender, const std::vector<unsigned char>& strReceiver, bool &isMine, UniValue& oAssetAllocation);
 bool AccumulateInterestSinceLastClaim(CAssetAllocation & assetAllocation, const int& nHeight);
 #endif // ASSETALLOCATION_H
