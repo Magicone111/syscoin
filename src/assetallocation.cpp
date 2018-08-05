@@ -289,7 +289,7 @@ bool AccumulateInterestSinceLastClaim(CAssetAllocation & assetAllocation, const 
 	
 	arith_uint256 nAccumulatedBalanceSinceLastInterestClaim = UintToArith256(assetAllocation.nAccumulatedBalanceSinceLastInterestClaim);
 	// formula is 1/N * (blocks since last update * previous balance/interest rate) where N is the number of blocks in the total time period
-	nAccumulatedBalanceSinceLastInterestClaim += assetAllocation.nBalance*nBlocksSinceLastUpdate
+	nAccumulatedBalanceSinceLastInterestClaim += assetAllocation.nBalance*nBlocksSinceLastUpdate;
 	assetAllocation.nAccumulatedBalanceSinceLastInterestClaim = ArithToUint256(nAccumulatedBalanceSinceLastInterestClaim);
 	assetAllocation.fAccumulatedInterestSinceLastInterestClaim += assetAllocation.fInterestRate*nBlocksSinceLastUpdate;
 	return true;
