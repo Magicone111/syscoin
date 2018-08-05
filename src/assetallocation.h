@@ -139,7 +139,7 @@ public:
 		READWRITE(listSendingAllocationInputs);
 		READWRITE(listSendingAllocationAmounts);
 		READWRITE(nBalance);
-		READWRITE(VARINT(nAccumulatedBalanceSinceLastInterestClaim));
+		READWRITE(nAccumulatedBalanceSinceLastInterestClaim);
 		READWRITE(fAccumulatedInterestSinceLastInterestClaim);
 		READWRITE(fInterestRate);
 		READWRITE(vchMemo);
