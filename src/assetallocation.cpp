@@ -276,7 +276,7 @@ bool ApplyAssetAllocationInterest(CAsset& asset, CAssetAllocation & assetAllocat
 	asset.nTotalSupply += nInterest;
 	assetAllocation.nLastInterestClaimHeight = nHeight;
 	// set accumulators to 0 again since we have claimed
-	assetAllocation.nAccumulatedBalanceSinceLastInterestClaim = 0;
+	assetAllocation.nAccumulatedBalanceSinceLastInterestClaim.SetNull();
 	assetAllocation.fAccumulatedInterestSinceLastInterestClaim = 0;
 	return true;
 }
@@ -285,8 +285,11 @@ bool AccumulateInterestSinceLastClaim(CAssetAllocation & assetAllocation, const 
 	const int &nBlocksSinceLastUpdate = (nHeight - assetAllocation.nHeight);
 	if (nBlocksSinceLastUpdate <= 0)
 		return false;
+	
+	arith_uint256 nAccumulatedBalanceSinceLastInterestClaim = UintToArith256(assetAllocation.nAccumulatedBalanceSinceLastInterestClaim);
 	// formula is 1/N * (blocks since last update * previous balance/interest rate) where N is the number of blocks in the total time period
-	assetAllocation.nAccumulatedBalanceSinceLastInterestClaim += assetAllocation.nBalance*nBlocksSinceLastUpdate;
+	nAccumulatedBalanceSinceLastInterestClaim += assetAllocation.nBalance*nBlocksSinceLastUpdate
+	assetAllocation.nAccumulatedBalanceSinceLastInterestClaim = ArithToUint256(nAccumulatedBalanceSinceLastInterestClaim);
 	assetAllocation.fAccumulatedInterestSinceLastInterestClaim += assetAllocation.fInterestRate*nBlocksSinceLastUpdate;
 	return true;
 }

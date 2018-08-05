@@ -106,7 +106,7 @@ public:
 	RangeInputArrayTuples listSendingAllocationInputs;
 	RangeAmountTuples listSendingAllocationAmounts;
 	CAmount nBalance;
-	uint64_t nAccumulatedBalanceSinceLastInterestClaim;
+	uint256 nAccumulatedBalanceSinceLastInterestClaim;
 	float fAccumulatedInterestSinceLastInterestClaim;
 	float fInterestRate;
 	std::vector<unsigned char> vchMemo;
@@ -125,6 +125,7 @@ public:
 		listSendingAllocationAmounts.clear();
 		vchAliasOrAddress.clear();
 		vchAsset.clear();
+		nAccumulatedBalanceSinceLastInterestClaim.SetNull();
 	}
 	ADD_SERIALIZE_METHODS;
 	template <typename Stream, typename Operation>
@@ -168,7 +169,7 @@ public:
 	inline friend bool operator!=(const CAssetAllocation &a, const CAssetAllocation &b) {
 		return !(a == b);
 	}
-	inline void SetNull() { fInterestRate = 0; fAccumulatedInterestSinceLastInterestClaim = 0; nAccumulatedBalanceSinceLastInterestClaim = 0; vchMemo.clear(); nLastInterestClaimHeight = 0; nBalance = 0; listSendingAllocationAmounts.clear();  listSendingAllocationInputs.clear(); listAllocationInputs.clear(); vchAsset.clear(); vchAliasOrAddress.clear(); nHeight = 0; txHash.SetNull(); }
+	inline void SetNull() { fInterestRate = 0; fAccumulatedInterestSinceLastInterestClaim = 0; nAccumulatedBalanceSinceLastInterestClaim.SetNull(); vchMemo.clear(); nLastInterestClaimHeight = 0; nBalance = 0; listSendingAllocationAmounts.clear();  listSendingAllocationInputs.clear(); listAllocationInputs.clear(); vchAsset.clear(); vchAliasOrAddress.clear(); nHeight = 0; txHash.SetNull(); }
 	inline bool IsNull() const { return (vchAsset.empty()); }
 	bool UnserializeFromTx(const CTransaction &tx);
 	bool UnserializeFromData(const std::vector<unsigned char> &vchData, const std::vector<unsigned char> &vchHash);
