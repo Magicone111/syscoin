@@ -1224,7 +1224,7 @@ void AssetTransfer(const string& node, const string &tonode, const string& name,
 	UniValue r;
 
 	BOOST_CHECK_NO_THROW(r = CallRPC(node, "assetinfo " + name + " false"));
-	string oldalias = find_value(r.get_obj(), "owner").get_str();
+	string oldalias = find_value(r.get_obj(), "alias").get_str();
 	string oldsymbol = find_value(r.get_obj(), "symbol").get_str();
 
 
